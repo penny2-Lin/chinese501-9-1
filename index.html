@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功夫熊貓生命挑戰遊戲</title>
+    <style>
+        body { display: flex; flex-direction: column; height: 100dvh; margin: 0; font-family: 'Microsoft JhengHei', sans-serif; overflow: hidden; background-color: #fffaf0; }
+        header { background: #8b4513; color: white; padding: 10px; text-align: center; flex-shrink: 0; }
+        header h1 { margin: 5px 0; font-size: 1.5rem; }
+        #story-main { flex: 1; overflow-y: auto; padding: 20px; line-height: 2.2; font-size: 1.2rem; background: white; border: 10px solid #deb887; margin: 10px; border-radius: 15px; }
+        .drop-zone { border-bottom: 2px solid red; display: inline-block; min-width: 70px; text-align: center; line-height: 1.2; padding-bottom: 0px; vertical-align: bottom; color: #d2691e; font-weight: bold; cursor: pointer; }
+        footer { background: #f5deb3; padding: 10px; border-top: 2px solid #8b4513; flex-shrink: 0; }
+        #word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; justify-content: center; }
+        .word-item { background: white; border: 2px solid #8b4513; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 1rem; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; }
+        #check-btn { background-color: #d2691e; }
+        #reset-btn { background-color: #708090; }
+        .correct { color: #228b22 !important; border-bottom-color: #228b22 !important; }
+        .wrong { color: #ff0000 !important; border-bottom-color: #ff0000 !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>功夫熊貓：生命鍛鍊課</h1>
+        <p>點擊詞語後填入紅線格，再按檢查！</p>
+    </header>
+
+    <div id="story-main">
+        在和平谷的玉皇宮中，阿寶正接受師父最嚴酷的訓練。師父告訴他，真正的功夫不只是招式，更是為了 <span class="drop-zone" data-ans="維持"></span> 內心的正義。為了測試阿寶，師父帶他來到一片荒廢的森林，那裡的土地充滿了死亡氣息，許多植物因為神祕的毒素而 <span class="drop-zone" data-ans="腐爛"></span> 。
+        師父指著一株在毒素中掙扎的 <span class="drop-zone" data-ans="幼芽"></span> ，告訴阿寶：這森林正遭受如同 <span class="drop-zone" data-ans="癌症"></span> 般蔓延的黑暗力量侵蝕。阿寶必須帶著這株幼芽，踏上一段 <span class="drop-zone" data-ans="崎嶇"></span> 的山路，前往山頂的神泉。這不僅是體力的挑戰，更是與意志力的 <span class="drop-zone" data-ans="奮戰"></span> 。
+        一路上，阿寶遭遇了無數次的 <span class="drop-zone" data-ans="衝擊"></span> ，巨大的滾石 <span class="drop-zone" data-ans="屢屢"></span> 險些將他擊落山谷。 <span class="drop-zone" data-ans="即使"></span> 全身痠痛，阿寶仍不斷 <span class="drop-zone" data-ans="鍛鍊"></span> 自己的耐力。他將自己的雙手當作 <span class="drop-zone" data-ans="鍛造"></span> 鋼鐵的鐵錘，揮出如同 <span class="drop-zone" data-ans="拳擊"></span> 般精準的力道撥開障礙。口渴時，他就在路邊摘下一顆 <span class="drop-zone" data-ans="椰子"></span> 補充體力，並將剩餘的水分 <span class="drop-zone" data-ans="給予"></span> 懷中脆弱的幼芽，確保它的生命力不會 <span class="drop-zone" data-ans="減少"></span> 。
+        阿寶終於抵達神泉，雖然他沒有獲得金牌或 <span class="drop-zone" data-ans="銅牌"></span> 這種世俗的榮耀，但看著幼芽重獲新生，他體會到生命的韌性。這次的磨難，將阿寶的意志 <span class="drop-zone" data-ans="鍛鍊"></span> 得如鋼鐵般堅硬，他準備好迎接未來的任何挑戰。
+    </div>
+
+    <footer>
+        <div id="word-bank"></div>
+        <div class="btn-group">
+            <button id="check-btn" onclick="checkResults()">檢查任務結果</button>
+            <button id="reset-btn" onclick="resetGame()">重置遊戲</button>
+        </div>
+    </footer>
+
+    <script>
+        const words = ["維持", "腐爛", "幼芽", "癌症", "崎嶇", "奮戰", "衝擊", "屢屢", "即使", "鍛鍊", "鍛造", "拳擊", "椰子", "給予", "減少", "銅牌"];
+        const wordBank = document.getElementById('word-bank');
+        const zones = document.querySelectorAll('.drop-zone');
+        let selectedWord = null;
+
+        function init() {
+            wordBank.innerHTML = '';
+            [...words].sort(() => Math.random() - 0.5).forEach(word => {
+                const span = document.createElement('span');
+                span.className = 'word-item';
+                span.textContent = word;
+                span.onclick = () => { selectedWord = word; };
+                wordBank.appendChild(span);
+            });
+        }
+
+        zones.forEach(zone => {
+            zone.onclick = () => {
+                if (zone.textContent) { zone.textContent = ''; zone.className = 'drop-zone'; }
+                else if (selectedWord) { zone.textContent = selectedWord; selectedWord = null; }
+            };
+        });
+
+        function checkResults() {
+            let win = true;
+            zones.forEach(zone => {
+                if (zone.textContent === zone.getAttribute('data-ans')) zone.classList.add('correct');
+                else { zone.classList.add('wrong'); win = false; }
+            });
+            if (win) alert('太棒了！阿寶通過了考驗！');
+        }
+
+        function resetGame() {
+            zones.forEach(zone => { zone.textContent = ''; zone.className = 'drop-zone'; });
+            init();
+        }
+        init();
+    </script>
+</body>
+</html>
